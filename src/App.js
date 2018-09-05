@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { auth, googleAuthProvider, database } from './firebase';
 import { map } from 'lodash';
+import { Layout, Menu, Modal, Row, Col, Input  } from 'antd';
 
 class App extends Component {
   state = {
@@ -9,6 +10,7 @@ class App extends Component {
     artistName: '',
     textChord: '',
     data: null,
+    isModal: false,
   };
 
   componentDidMount() {
@@ -16,8 +18,6 @@ class App extends Component {
       this.setState({ currUser})
     });
     this.getSongList();
-
-
   }
 
   componentDidUpdate() {
@@ -58,8 +58,7 @@ class App extends Component {
     })
   }
 
-  addSong = (e) => {
-    e.preventDefault();
+  addSong = () => {
     const { artistName, songName, textChords } = this.state;
 
     if (artistName && songName && textChords) {
@@ -69,79 +68,124 @@ class App extends Component {
         songName: '',
         artistName: '',
         textChords: '',
+        isModal: false,
       });
     }
   }
 
-  addSongForm = () => (
-    <div>
-      <form onSubmit={this.addSong}>
-        <div>
-          <label>
-            Artist
-          <input value={this.state.artistName} onChange={this.onChangeArtistName}/> 
-          </label>
-        </div>
-        <div>
-          <label>
-            Song name
-          <input value={this.state.songName} onChange={this.onChangeSongName}/> 
-          </label>
-        </div>
-        <div>
-          <label>
-            Text
-          <textarea value={this.state.textChords} onChange={this.onChangeTextChord} /> 
-          </label>
-        </div>
-        <input type="submit" disabled={!this.state.currUser} value="add song" />
-      </form>
-    </div>
+  handleCancel = () => {
+    this.setState({ isModal: false })
+  }
+
+  showModal = () => {
+    this.setState({ isModal: true })
+  }
+
+  renderAddForm = () => (
+    <Row>
+      <Col span={12}>
+        <Row style={{padding: '10px 0'}}>
+          <Input placeholder="Artist" value={this.state.artistName} onChange={this.onChangeArtistName} style={{ height: 20 }}/> 
+        </Row>
+        <Row style={{padding: '10px 0'}}>
+          <Input placeholder="Song name" value={this.state.songName} onChange={this.onChangeSongName} style={{ height: 20 }}/> 
+        </Row>
+        <Row style={{padding: '10px 0'}}>
+          <Input.TextArea placeholder="Text" value={this.state.textChords} onChange={this.onChangeTextChord} autosize/> 
+        </Row>
+      </Col>
+    </Row>
   );
 
-  renderSongs = () => {
-    const { data } = this.state;
-    return map(data, (artists, artistName) => {
-      return (
-        <div>
-          <h1>{ artistName }</h1>
-          <blockquote>
-            { 
-              map(artists, (song, songName) => {
-                const chordText = map(song, (song) => song.text)
-                return (
-                  <div>
-                    <h2>{songName}</h2>
-                    <blockquote>
-                    <pre>{chordText}</pre>
-                    </blockquote>
-                  </div>
-                )
-              }) 
-            }
-          </blockquote>
-        </div>
-      )
-    });
+  renderSongs = () => map(this.state.data, (artists, artistName) => (
+    <div key={artistName}>
+      <h1>{ artistName }</h1>
+      <blockquote>
+        { map(artists, (song, songName) => (
+            <div key={songName}>
+              <h2>{songName}</h2>
+              <blockquote>
+                <pre>{ map(song, (song) => song.text) }</pre>
+              </blockquote>
+            </div>
+          )) }
+      </blockquote>
+    </div>
+  ));
+
+  renderSongList = () => map(this.state.data, (artists, artistName) => {
+    return (
+      <Menu theme="dark" mode="inline">
+        { 
+          map(artists, (song, songName) => (
+            <Menu.Item key={songName}>
+              <span className="nav-text">{ artistName } - { songName }</span>
+            </Menu.Item>
+          ))  
+        }
+      </Menu>
+    )
+  });
+
+  renderLayout = () => {
+    const { currUser, data } = this.state;
+    const { Header, Content, Footer, Sider } = Layout;
+
+    return (
+      <div>
+        <Modal
+          title={null}
+          visible={this.state.isModal}
+          closable={false}
+          onOk={this.addSong}
+          onCancel={this.handleCancel}
+          okText="Обновить"
+          style={{ 
+            zIndex: 10,
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translateX(-50%) translateY(-50%)',
+            background: '#FFF',
+            padding: 40,
+            border: '1px solid #CCC',
+            borderRadius: 3,
+          }}
+        >
+          { currUser && this.renderAddForm() }
+        </Modal>
+        <Layout>
+          <Layout style={{ marginLeft: 400 }}>
+            <Header style={{ background: '#fff', padding: 0 }} />
+            <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+              <div>
+              {data && this.renderSongs()}
+              </div>
+            </Content>
+            <Sider width='auto' style={{ 
+                overflow: 'auto', 
+                height: '100vh', 
+                position: 'fixed', 
+                left: 0, 
+                top: 0,
+              }}>
+              <button onClick={() => this.signIn()} disabled={currUser}>Sing in</button>
+              <button onClick={() => this.signOut()} disabled={!currUser}>Sing out</button>
+              <h1>{currUser && currUser.displayName}</h1>
+              <input type="submit" disabled={!this.state.currUser} value="add song" onClick={() => this.showModal()}/>
+              { this.renderSongList() }
+            </Sider>
+            <Footer style={{ textAlign: 'center' }}>
+              MoyBoy аккорды песни гитара подборки
+            </Footer>
+          </Layout>
+        </Layout>
+      </div>
+    )
   }
 
   render() {
-    const { currUser, data } = this.state;
-
-    return (
-      <div className="App">
-        <button onClick={() => this.signIn()} disabled={currUser}>Sing in</button>
-        <button onClick={() => this.signOut()} disabled={!currUser}>Sing out</button>
-
-        <h1>
-          {currUser && currUser.displayName}
-        </h1>
-
-        {currUser && this.addSongForm()}
-
-        {data && this.renderSongs()}
-      </div>
-    ); 
+    return this.renderLayout(); 
   }
 }
 
