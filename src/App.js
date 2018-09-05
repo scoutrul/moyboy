@@ -1,20 +1,35 @@
 import React, { Component } from 'react';
-import { auth, googleAuthProvider } from './firebase';
+import { auth, googleAuthProvider, database } from './firebase';
+import { map } from 'lodash';
 
 class App extends Component {
   state = {
     currUser: null,
-    songName: null,
+    songName: '',
+    artistName: '',
+    textChord: '',
+    data: null,
   };
 
   componentDidMount() {
     auth.onAuthStateChanged((currUser) => {
       this.setState({ currUser})
-    })
+    });
+    this.getSongList();
+
+
   }
 
   componentDidUpdate() {
-    console.log(this.state)
+    console.log(this.state);
+  }
+
+  getSongList = () => {
+    database.ref('catalog').on('value', (snapshot) => {
+      this.setState({
+        data: snapshot.val(),
+      })
+    })
   }
 
   signIn = () => {
@@ -25,38 +40,108 @@ class App extends Component {
     auth.signOut();
   }
 
-  addSong = (e) => {
-    e.preventDefault();
-    this.setState({
-      songName: '',
-    })
-  }
-
   onChangeSongName = ({ target }) => {
     this.setState({
       songName: target.value,
     })
   }
+  
+  onChangeArtistName = ({ target }) => {
+    this.setState({
+      artistName: target.value,
+    })
+  }
 
-  render() {
-    return (
-      <div className="App">
-        <button onClick={() => this.signIn()} disabled={this.state.currUser}>Sing in</button>
-        <button onClick={() => this.signOut()} disabled={!this.state.currUser}>Sing out</button>
+  onChangeTextChord = ({ target }) => {
+    this.setState({
+      textChords: target.value,
+    })
+  }
 
-        <h1>
-          {this.state.currUser && this.state.currUser.displayName}
-        </h1>
+  addSong = (e) => {
+    e.preventDefault();
+    const { artistName, songName, textChords } = this.state;
 
-        <form onSubmit={this.addSong}>
+    if (artistName && songName && textChords) {
+      database.ref(`catalog/${artistName}/${songName}/`).push({ text: textChords });
+
+      this.setState({
+        songName: '',
+        artistName: '',
+        textChords: '',
+      });
+    }
+  }
+
+  addSongForm = () => (
+    <div>
+      <form onSubmit={this.addSong}>
+        <div>
+          <label>
+            Artist
+          <input value={this.state.artistName} onChange={this.onChangeArtistName}/> 
+          </label>
+        </div>
+        <div>
           <label>
             Song name
-            <input type="text" value={this.state.songName} onChange={this.onChangeSongName}/> 
+          <input value={this.state.songName} onChange={this.onChangeSongName}/> 
           </label>
-          <input type="submit" disabled={!this.state.currUser} value="add song" />
-        </form>
+        </div>
+        <div>
+          <label>
+            Text
+          <textarea value={this.state.textChords} onChange={this.onChangeTextChord} /> 
+          </label>
+        </div>
+        <input type="submit" disabled={!this.state.currUser} value="add song" />
+      </form>
+    </div>
+  );
+
+  renderSongs = () => {
+    const { data } = this.state;
+    return map(data, (artists, artistName) => {
+      return (
+        <div>
+          <h1>{ artistName }</h1>
+          <blockquote>
+            { 
+              map(artists, (song, songName) => {
+                const chordText = map(song, (song) => song.text)
+                return (
+                  <div>
+                    <h2>{songName}</h2>
+                    <blockquote>
+                    <pre>{chordText}</pre>
+                    </blockquote>
+                  </div>
+                )
+              }) 
+            }
+          </blockquote>
+        </div>
+      )
+    });
+  }
+
+  render() {
+    const { currUser, data } = this.state;
+
+    return (
+      <div className="App">
+        <button onClick={() => this.signIn()} disabled={currUser}>Sing in</button>
+        <button onClick={() => this.signOut()} disabled={!currUser}>Sing out</button>
+
+        <h1>
+          {currUser && currUser.displayName}
+        </h1>
+
+        {currUser && this.addSongForm()}
+
+        {data && this.renderSongs()}
       </div>
-    );
+    ); 
   }
 }
 
