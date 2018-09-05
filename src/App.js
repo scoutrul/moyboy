@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { auth, googleAuthProvider, database } from './firebase';
-import { map } from 'lodash';
+import { map, get, findKey, pick } from 'lodash';
 import { Layout, Menu, Modal, Row, Col, Input  } from 'antd';
 
 class App extends Component {
   state = {
+    newSong: {
+      songName: '',
+      artistName: '',
+      textChords: '',
+    },
     currUser: null,
-    songName: '',
-    artistName: '',
-    textChord: '',
     data: null,
     isModal: false,
+    currSong: null,
   };
 
   componentDidMount() {
@@ -42,27 +45,34 @@ class App extends Component {
 
   onChangeSongName = ({ target }) => {
     this.setState({
-      songName: target.value,
+      newSong: {
+        songName: target.value
+      }
     })
   }
   
   onChangeArtistName = ({ target }) => {
     this.setState({
-      artistName: target.value,
+      newSong: {
+        artistName: target.value,
+      }
     })
   }
 
   onChangeTextChord = ({ target }) => {
     this.setState({
-      textChords: target.value,
+      newSong: {
+        textChords: target.value,
+      }
     })
   }
 
   addSong = () => {
-    const { artistName, songName, textChords } = this.state;
+    const { newSong } = this.state;
+    const { artistName, songName, textChords } = newSong;
 
     if (artistName && songName && textChords) {
-      database.ref(`catalog/${artistName}/${songName}/`).push({ text: textChords });
+      database.ref(`catalog/${artistName}/${songName}/`).push({ artistName, songName, textChords });
 
       this.setState({
         songName: '',
@@ -97,15 +107,26 @@ class App extends Component {
     </Row>
   );
 
+  showSong = (artistName, songName, songKey) => {
+    const textChords = this.state.data[artistName][songName][Object.keys(songKey)[0]].text;
+    this.setState({
+      currSong: {
+        artistName,
+        textChords,
+        songName,
+      }
+    })
+  }
+
   renderSongs = () => map(this.state.data, (artists, artistName) => (
     <div key={artistName}>
       <h1>{ artistName }</h1>
       <blockquote>
-        { map(artists, (song, songName) => (
+        { map(artists, (songKey, songName) => (
             <div key={songName}>
               <h2>{songName}</h2>
               <blockquote>
-                <pre>{ map(song, (song) => song.text) }</pre>
+                <pre>{ map(songKey, (song) => song.textChords || song.text) }</pre>
               </blockquote>
             </div>
           )) }
@@ -117,9 +138,9 @@ class App extends Component {
     return (
       <Menu theme="dark" mode="inline">
         { 
-          map(artists, (song, songName) => (
+          map(artists, (songKey, songName) => (
             <Menu.Item key={songName}>
-              <span className="nav-text">{ artistName } - { songName }</span>
+              <a className="nav-text" href="#" onClick={() => this.showSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
             </Menu.Item>
           ))  
         }
@@ -127,9 +148,29 @@ class App extends Component {
     )
   });
 
+  renderCurrSong = ({ artistName, songName, textChords }) => (
+    <div>
+      <h1>{ artistName }</h1>
+      <blockquote>
+        <div key={songName}>
+          <h2>{songName}</h2> - {artistName}
+          <blockquote>
+            <pre>{ textChords }</pre>
+          </blockquote>
+        </div>
+      </blockquote>
+    </div>
+  )
+
+  showAllSongs = () => {
+    this.setState({
+      currSong: null,
+    })
+  }
+
   renderLayout = () => {
-    const { currUser, data } = this.state;
-    const { Header, Content, Footer, Sider } = Layout;
+    const { currUser, data, currSong } = this.state;
+    const { Header, Content, Sider } = Layout;
 
     return (
       <div>
@@ -157,9 +198,11 @@ class App extends Component {
         <Layout>
           <Layout style={{ marginLeft: 400 }}>
             <Header style={{ background: '#fff', padding: 0 }} />
+            
             <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-              <div>
-              {data && this.renderSongs()}
+            <div>
+              { currSong && this.renderCurrSong(currSong) }
+              { !currSong && data && this.renderSongs() }
               </div>
             </Content>
             <Sider width='auto' style={{ 
@@ -174,10 +217,8 @@ class App extends Component {
               <h1>{currUser && currUser.displayName}</h1>
               <input type="submit" disabled={!this.state.currUser} value="add song" onClick={() => this.showModal()}/>
               { this.renderSongList() }
+              <input type="submit" value="show all" onClick={() => this.showAllSongs()}/>
             </Sider>
-            <Footer style={{ textAlign: 'center' }}>
-              MoyBoy аккорды песни гитара подборки
-            </Footer>
           </Layout>
         </Layout>
       </div>
