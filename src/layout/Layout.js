@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
 import { map } from 'lodash';
+import styles from './styles.scss';
 
 const MainLayout = ({ currUser, currSong, showAllSongs, signIn, signOut, isEditSongModal, data }) => {
 	const { Header, Content, Sider } = Layout;
@@ -27,7 +28,7 @@ const MainLayout = ({ currUser, currSong, showAllSongs, signIn, signOut, isEditS
 			{ 
 				map(artists, (songKey, songName) => (
 				<Menu.Item key={songName}>
-					<a className="nav-text" href="#" onClick={() => this.showSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
+					<a className="nav-text" href={`#${songName}`} onClick={() => this.showSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
 				</Menu.Item>
 				))  
 			}
@@ -69,25 +70,19 @@ const MainLayout = ({ currUser, currSong, showAllSongs, signIn, signOut, isEditS
 
 	return (
 		<Layout>
-			<Layout style={{ marginLeft: 400 }}>
-				<Header style={{ background: '#fff', padding: 0 }} />
+			<Layout className={styles.leyoutMargin}>
+				<Header className={styles.header} />
 				
-				<Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+				<Content className={styles.content}>
 					{ renderAddButton() }
 					{ currSong && <input type="submit" value="show all" onClick={() => showAllSongs()}/>}
 					{ showSongs() }
 				</Content>
 				<Sider 
 					width='auto' 
-					style={{ 
-						overflow: 'auto', 
-						height: '100vh', 
-						position: 'fixed', 
-						left: 0, 
-						top: 0,
-					}}
+					className={styles.sider}
 				>
-				<Content style={{ margin: '24px 16px 0' }}>
+				<Content className={styles.content}>
 					{ signChange() }	
 					{ renderSongList() }
 				</Content>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Row, Col, Input } from 'antd';
+import styles from './styles.scss';
 
 class EditSongModal extends Component {
   state = {
@@ -59,17 +60,7 @@ class EditSongModal extends Component {
         onOk={addSong}
         onCancel={handleCancel}
         okText="Обновить"
-        style={{ 
-          zIndex: 10,
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translateX(-50%) translateY(-50%)',
-          background: '#FFF',
-          padding: 40,
-          border: '1px solid #CCC',
-          borderRadius: 3,
-        }}
+        className={styles.modal}
       >
         { currUser && renderAddForm() }
       </Modal>
