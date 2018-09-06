@@ -66,14 +66,14 @@ class App extends Component {
     const textChords = this.state.data[artistName][songName][Object.keys(songKey)[0]].text;
     this.setState({
       currSong: {
-        artistName,
-        textChords,
-        songName,
+      artistName,
+      textChords,
+      songName,
       }
     })
   }
-
-  showAllSongs = () => {
+  
+    showAllSongs = () => {
     this.setState({
       currSong: null,
     })
@@ -88,6 +88,7 @@ class App extends Component {
           currUser={currUser}
           currSong={currSong}
           showAllSongs={this.showAllSongs}
+          showSong={this.showSong}
           signIn={this.signIn}
           signOut={this.signOut}
           isEditSongModal={this.isEditSongModal}

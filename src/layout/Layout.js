@@ -6,7 +6,7 @@ import styles from './styles.scss';
 class MainLayout extends Component {
 
 	render() {
-		const { currUser, currSong, showAllSongs, signIn, signOut, isEditSongModal, data } = this.props;
+		const { currUser, currSong, showSong, showAllSongs, signIn, signOut, isEditSongModal, data } = this.props;
 		const { Header, Content, Sider } = Layout;
 
 		const renderSongs = () => map(data, (artists, artistName) => (
@@ -31,7 +31,7 @@ class MainLayout extends Component {
 				{ 
 					map(artists, (songKey, songName) => (
 					<Menu.Item key={songName}>
-						<a className="nav-text" href={`#${songName}`} onClick={() => this.showSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
+						<a className="nav-text" href={`#${songName}`} onClick={() => showSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
 					</Menu.Item>
 					))  
 				}
@@ -75,7 +75,6 @@ class MainLayout extends Component {
 				{ this.props.children }
 				<Layout className={styles.leyoutMargin}>
 					<Header className={styles.header} />
-				
 					<Content className={styles.content}>
 						{ renderAddButton() }
 						{ currSong && <input type="submit" value="show all" onClick={() => showAllSongs()}/>}
