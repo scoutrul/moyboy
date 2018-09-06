@@ -18,9 +18,8 @@ class App extends Component {
 
   componentDidMount() {
     auth.onAuthStateChanged((currUser) => {
-      this.setState({ currUser})
+      this.setState({ currUser});
     });
-    this.getSongList();
   }
 
   componentDidUpdate() {
@@ -36,7 +35,7 @@ class App extends Component {
   }
 
   signIn = () => {
-    auth.signInWithPopup(googleAuthProvider);
+    auth.signInWithPopup(googleAuthProvider).then(() => this.getSongList());
   }
 
   signOut = () => {
