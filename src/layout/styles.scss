@@ -1,7 +1,7 @@
 .modal { 
 	z-index: 10;
 	position: fixed;
-	top: 50%;
+	top: 50vh;
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);
 	background: #FFF;
@@ -16,11 +16,11 @@
 }
 
 .sider {
-		overflow: auto;
-		height: 100vh;
-		position: fixed;
-		left: 0;
-		top: 0;
+	overflow: auto;
+	height: 100vh;
+	position: fixed;
+	left: 0;
+	top: 0;
 }
 
 .header {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { auth, googleAuthProvider, database } from './firebase';
 import { MainLayout, EditSongModal } from './layout';
+import './styles.scss'
 
 class App extends Component {
   state = {
@@ -83,13 +84,6 @@ class App extends Component {
 
     return (
       <div>
-        <EditSongModal 
-          isModal={isModal}
-          currUser={currUser}
-          renderAddForm={this.renderAddForm}
-          addSong={this.addSong}
-          handleCancel={this.handleCancel}
-        />
         <MainLayout 
           currUser={currUser}
           currSong={currSong}
@@ -98,7 +92,15 @@ class App extends Component {
           signOut={this.signOut}
           isEditSongModal={this.isEditSongModal}
           data={data}
-        />
+        >
+          <EditSongModal 
+            isModal={isModal}
+            currUser={currUser}
+            renderAddForm={this.renderAddForm}
+            addSong={this.addSong}
+            handleCancel={this.handleCancel}
+          />
+        </MainLayout>
       </div>
     )
   }

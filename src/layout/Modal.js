@@ -10,27 +10,15 @@ class EditSongModal extends Component {
   };
 
   onChangeSongName = ({ target }) => {
-    this.setState({
-      newSong: {
-        songName: target.value
-      }
-    })
+    this.setState({songName: target.value})
   }
   
   onChangeArtistName = ({ target }) => {
-    this.setState({
-      newSong: {
-        artistName: target.value,
-      }
-    })
+    this.setState({artistName: target.value})
   }
 
   onChangeTextChord = ({ target }) => {
-    this.setState({
-      newSong: {
-        textChords: target.value,
-      }
-    })
+    this.setState({textChords: target.value})
   }
   
   render() {
@@ -61,6 +49,7 @@ class EditSongModal extends Component {
         onCancel={handleCancel}
         okText="Обновить"
         className={styles.modal}
+        getContainer={() => document.getElementById('root')}
       >
         { currUser && renderAddForm() }
       </Modal>
