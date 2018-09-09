@@ -45,7 +45,7 @@ class EditSongModal extends Component {
         title={null}
         visible={isModal}
         closable={false}
-        onOk={addSong}
+        onOk={() => addSong(this.state)}
         onCancel={handleCancel}
         okText="Обновить"
         className={styles.modal}

@@ -38,8 +38,7 @@ class App extends Component {
     auth.signOut().then(this.setState({ currUser: null}));
   }
 
-  addSong = () => {
-    const { newSong } = this.state;
+  addSong = (newSong) => {
     const { artistName, songName, textChords } = newSong;
 
     if (artistName && songName && textChords) {
@@ -63,7 +62,7 @@ class App extends Component {
   }
 
   showSong = (artistName, songName, songKey) => {
-    const textChords = this.state.data[artistName][songName][Object.keys(songKey)[0]].text;
+    const textChords = this.state.data[artistName][songName][Object.keys(songKey)[0]].text || this.state.data[artistName][songName][Object.keys(songKey)[0]].textChords;
     this.setState({
       currSong: {
       artistName,

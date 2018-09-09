@@ -17,7 +17,7 @@ class MainLayout extends Component {
 					<div key={songName}>
 						<h2>{songName}</h2>
 						<blockquote>
-						<pre>{ map(songKey, (song) => song.textChords || song.text) }</pre>
+						<pre>{ map(songKey, (song) => console.log(song) || song.textChords || song.text) }</pre>
 						</blockquote>
 					</div>
 					)) }
