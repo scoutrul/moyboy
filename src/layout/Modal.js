@@ -9,6 +9,15 @@ class EditSongModal extends Component {
     textChords: '',
   };
 
+  componentDidMount(){
+    if(this.props.isEditSongMode) {
+      const editingSong = this.props.editingSong;
+      this.setState({
+        ...editingSong
+      })
+    }
+  }
+
   onChangeSongName = ({ target }) => {
     this.setState({songName: target.value})
   }
@@ -21,37 +30,40 @@ class EditSongModal extends Component {
     this.setState({textChords: target.value})
   }
   
-  render() {
-    const { isModal, currUser, addSong, handleCancel } = this.props;
+  renderAddForm = () => {
+    const {artistName, songName, textChords} = this.state;
 
-    const renderAddForm = () => (
+    return (
       <Row>
         <Col span={12}>
           <Row style={{padding: '10px 0'}}>
-            <Input placeholder="Artist" value={this.state.artistName} onChange={this.onChangeArtistName} style={{ height: 20 }}/> 
+            <Input placeholder="Artist" value={artistName} onChange={this.onChangeArtistName} style={{ height: 20 }}/> 
           </Row>
           <Row style={{padding: '10px 0'}}>
-            <Input placeholder="Song name" value={this.state.songName} onChange={this.onChangeSongName} style={{ height: 20 }}/> 
+            <Input placeholder="Song name" value={songName} onChange={this.onChangeSongName} style={{ height: 20 }}/> 
           </Row>
           <Row style={{padding: '10px 0'}}>
-            <Input.TextArea placeholder="Text" value={this.state.textChords} onChange={this.onChangeTextChord} autosize/> 
+            <Input.TextArea placeholder="Text" value={textChords} onChange={this.onChangeTextChord} autosize/> 
           </Row>
         </Col>
       </Row>
     );
+  }
 
+  render() {
+    const { isModal, currUser, onAddSong, onModalCancel } = this.props;
     return (
       <Modal
         title={null}
         visible={isModal}
         closable={false}
-        onOk={() => addSong(this.state)}
-        onCancel={handleCancel}
+        onOk={() => onAddSong(this.state)}
+        onCancel={onModalCancel}
         okText="Обновить"
         className={styles.modal}
         getContainer={() => document.getElementById('root')}
       >
-        { currUser && renderAddForm() }
+        { currUser && this.renderAddForm() }
       </Modal>
     )
   }

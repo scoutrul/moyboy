@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { auth, googleAuthProvider, database } from './firebase';
 import { MainLayout, EditSongModal } from './layout';
+import { get } from 'lodash';
 import './styles.scss'
 
 class App extends Component {
@@ -30,15 +31,15 @@ class App extends Component {
     })
   }
 
-  signIn = () => {
+  onSignIn = () => {
     auth.signInWithPopup(googleAuthProvider).then(() => this.getSongList());
   }
 
-  signOut = () => {
+  onSignOut = () => {
     auth.signOut().then(this.setState({ currUser: null}));
   }
 
-  addSong = (newSong) => {
+  onAddSong = (newSong) => {
     const { artistName, songName, textChords } = newSong;
 
     if (artistName && songName && textChords) {
@@ -49,30 +50,50 @@ class App extends Component {
         artistName: '',
         textChords: '',
         isModal: false,
+        isEditSongMode: false,
+        editingSong: null,
       });
     }
   }
 
-  handleCancel = () => {
-    this.setState({ isModal: false })
+  onEditSong = (song) => {
+    const songPath = get(this.state, song.path);
+    this.setState({ 
+      isModal: true,
+      isEditSongMode: true,
+      editingSong: {
+        songPath,
+        ...song
+      },
+     })
   }
 
-  isEditSongModal = () => {
+  onModalCancel = () => {
+    this.setState({ 
+      isModal: false,
+      isEditSongMode: false,
+     })
+  }
+
+  onAddSongModal = () => {
     this.setState({ isModal: true })
   }
 
-  showSong = (artistName, songName, songKey) => {
+  onShowSong = (artistName, songName, songKey) => {
+    // завести константы для сущностей
     const textChords = this.state.data[artistName][songName][Object.keys(songKey)[0]].text || this.state.data[artistName][songName][Object.keys(songKey)[0]].textChords;
     this.setState({
       currSong: {
-      artistName,
-      textChords,
-      songName,
+        artistName,
+        textChords,
+        songName,
+        songKey: Object.keys(songKey)[0],
+        path: `data.${artistName}.${songName}.${songKey}`
       }
-    })
+    });
   }
   
-    showAllSongs = () => {
+  onShowAllSongs = () => {
     this.setState({
       currSong: null,
     })
@@ -86,19 +107,22 @@ class App extends Component {
         <MainLayout 
           currUser={currUser}
           currSong={currSong}
-          showAllSongs={this.showAllSongs}
-          showSong={this.showSong}
-          signIn={this.signIn}
-          signOut={this.signOut}
-          isEditSongModal={this.isEditSongModal}
+          onShowAllSongs={this.onShowAllSongs}
+          onShowSong={this.onShowSong}
+          onSignIn={this.onSignIn}
+          onSignOut={this.onSignOut}
+          onAddSongModal={this.onAddSongModal}
           data={data}
+          onEditSong={this.onEditSong}
         >
           <EditSongModal 
             isModal={isModal}
             currUser={currUser}
             renderAddForm={this.renderAddForm}
-            addSong={this.addSong}
-            handleCancel={this.handleCancel}
+            onAddSong={this.onAddSong}
+            onModalCancel={this.onModalCancel}
+            isEditSongMode={this.state.isEditSongMode}
+            editingSong={this.state.editingSong}
           />
         </MainLayout>
       </div>

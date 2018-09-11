@@ -6,7 +6,17 @@ import styles from './styles.scss';
 class MainLayout extends Component {
 
 	render() {
-		const { currUser, currSong, showSong, showAllSongs, signIn, signOut, isEditSongModal, data } = this.props;
+		const { 
+			data,
+			onAddSongModal, 
+			currUser, 
+			currSong, 
+			onShowSong, 
+			onShowAllSongs, 
+			onSignIn, 
+			onSignOut, 
+			onEditSong,
+		} = this.props;
 		const { Header, Content, Sider } = Layout;
 
 		const renderSongs = () => map(data, (artists, artistName) => (
@@ -17,7 +27,7 @@ class MainLayout extends Component {
 					<div key={songName}>
 						<h2>{songName}</h2>
 						<blockquote>
-						<pre>{ map(songKey, (song) => console.log(song) || song.textChords || song.text) }</pre>
+						<pre>{ map(songKey, (song) => song.textChords || song.text) }</pre>
 						</blockquote>
 					</div>
 					)) }
@@ -27,12 +37,12 @@ class MainLayout extends Component {
 	
 		const renderSongList = () => map(data, (artists, artistName) => {
 			return (
-				<Menu theme="dark" mode="inline">
+				<Menu theme="dark" mode="inline" key="songData">
 				{ 
 					map(artists, (songKey, songName) => (
-					<Menu.Item key={songName}>
-						<a className="nav-text" href={`#${songName}`} onClick={() => showSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
-					</Menu.Item>
+						<Menu.Item key={songName}>
+							<a className="nav-text" href={`#${songName}`} onClick={() => onShowSong(artistName, songName, songKey)}>{ artistName } - { songName }</a>
+						</Menu.Item>
 					))  
 				}
 				</Menu>
@@ -42,22 +52,23 @@ class MainLayout extends Component {
 		const renderCurrSong = ({ artistName, songName, textChords }) => (
 			<div>
 				<h1>{ artistName }</h1>
+				<button onClick={() => onEditSong(currSong)}>Edit</button>
 				<blockquote>
-				<div key={songName}>
-					<h2>{songName}</h2>
-					<blockquote>
-					<pre>{ textChords }</pre>
-					</blockquote>
-				</div>
+					<div key={songName}>
+						<h2>{songName}</h2>
+						<blockquote>
+						<pre>{ textChords }</pre>
+						</blockquote>
+					</div>
 				</blockquote>
 			</div>
 		);
 	
 		const signChange = () => {
 			if (currUser) {
-				return <button onClick={() => signOut()} disabled={!currUser}>Sing out</button>
+				return <button onClick={() => onSignOut()} disabled={!currUser}>Sing out</button>
 			}
-			return <button onClick={() => signIn()} disabled={currUser}>Sing in</button>
+			return <button onClick={() => onSignIn()} disabled={currUser}>Sing in</button>
 		}
 		
 		const showSongs = () => {
@@ -68,7 +79,7 @@ class MainLayout extends Component {
 		}
 	
 		const renderAddButton = () => {
-			return currUser && <input type="submit" value="add song" onClick={() => isEditSongModal()}/>
+			return currUser && <input type="submit" value="add song" onClick={() => onAddSongModal()}/>
 		}
 		return (
 			<Layout>
@@ -77,7 +88,7 @@ class MainLayout extends Component {
 					<Header className={styles.header} />
 					<Content className={styles.content}>
 						{ renderAddButton() }
-						{ currSong && <input type="submit" value="show all" onClick={() => showAllSongs()}/>}
+						{ currSong && <input type="submit" value="show all" onClick={() => onShowAllSongs()}/>}
 						{ showSongs() }
 					</Content>
 					<Sider 
