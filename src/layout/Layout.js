@@ -85,13 +85,10 @@ class MainLayout extends Component {
 		}
 		return (
 			<Layout>
-				{ this.props.children }
 				<Layout className={styles.leyoutMargin}>
 					<Header className={styles.header} />
 					<Content className={styles.content}>
-						{ renderAddButton() }
 						{ currSong && <input type="submit" value="show all" onClick={() => onShowAllSongs()}/>}
-						{ showSongs() }
 					</Content>
 					<Sider 
 						width='auto' 
@@ -100,6 +97,8 @@ class MainLayout extends Component {
 						<Content className={styles.content}>
 							{ renderSignButton() }	
 							{ renderSongList() }
+							{ showSongs() }
+							{ renderAddButton() }
 						</Content>
 					</Sider>
 				</Layout>

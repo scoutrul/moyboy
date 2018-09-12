@@ -125,17 +125,16 @@ class App extends Component {
           onAddSongModal={this.onAddSongModal}
           onEditSong={this.onEditSong}
           onDeleteSong={this.onDeleteSong}
-        >
-          <EditSongModal 
-            currSong={currSong}
-            currUser={currUser}
-            isModal={isModal}
-            isEditSongMode={this.state.isEditSongMode}
-            updateSong={this.updateSong}
-            onModalCancel={this.onModalCancel}
-            renderAddForm={this.renderAddForm}
-          />
-        </MainLayout>
+        />
+        <EditSongModal 
+          currSong={currSong}
+          currUser={currUser}
+          isModal={isModal}
+          isEditSongMode={this.state.isEditSongMode}
+          updateSong={this.updateSong}
+          onModalCancel={this.onModalCancel}
+          renderAddForm={this.renderAddForm}
+        />
       </div>
     )
   }
