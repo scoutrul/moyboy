@@ -56,15 +56,10 @@ class App extends Component {
     }
   }
 
-  onEditSong = (song) => {
-    const songPath = get(this.state, song.path);
+  onEditSong = () => {
     this.setState({ 
       isModal: true,
       isEditSongMode: true,
-      editingSong: {
-        songPath,
-        ...song
-      },
      })
   }
 
@@ -88,7 +83,7 @@ class App extends Component {
         textChords,
         songName,
         songKey: Object.keys(songKey)[0],
-        path: `data.${artistName}.${songName}.${songKey}`
+        path: `data.${artistName}.${songName}.${Object.keys(songKey)[0]}`
       }
     });
   }
@@ -105,6 +100,7 @@ class App extends Component {
     return (
       <div>
         <MainLayout 
+          data={data}
           currUser={currUser}
           currSong={currSong}
           onShowAllSongs={this.onShowAllSongs}
@@ -112,7 +108,6 @@ class App extends Component {
           onSignIn={this.onSignIn}
           onSignOut={this.onSignOut}
           onAddSongModal={this.onAddSongModal}
-          data={data}
           onEditSong={this.onEditSong}
         >
           <EditSongModal 
@@ -122,7 +117,7 @@ class App extends Component {
             onAddSong={this.onAddSong}
             onModalCancel={this.onModalCancel}
             isEditSongMode={this.state.isEditSongMode}
-            editingSong={this.state.editingSong}
+            currSong={currSong}
           />
         </MainLayout>
       </div>

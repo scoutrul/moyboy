@@ -9,29 +9,40 @@ class EditSongModal extends Component {
     textChords: '',
   };
 
-  componentDidMount(){
-    if(this.props.isEditSongMode) {
-      const editingSong = this.props.editingSong;
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if(nextProps.currSong) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.isEditSongMode) {
+      const { artistName, songName, textChords } = this.props.currSong;
       this.setState({
-        ...editingSong
-      })
+        artistName, songName, textChords
+      });
     }
   }
 
+  componentDidUpdate(){
+    console.log(this.state)
+  }
+
   onChangeSongName = ({ target }) => {
-    this.setState({songName: target.value})
+    this.setState( {songName: target.value })
   }
   
   onChangeArtistName = ({ target }) => {
-    this.setState({artistName: target.value})
+    this.setState({ artistName: target.value })
   }
 
   onChangeTextChord = ({ target }) => {
-    this.setState({textChords: target.value})
+    this.setState({ textChords: target.value })
   }
   
   renderAddForm = () => {
-    const {artistName, songName, textChords} = this.state;
+    const { artistName, songName, textChords } = this.state;
 
     return (
       <Row>

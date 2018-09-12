@@ -52,7 +52,7 @@ class MainLayout extends Component {
 		const renderCurrSong = ({ artistName, songName, textChords }) => (
 			<div>
 				<h1>{ artistName }</h1>
-				<button onClick={() => onEditSong(currSong)}>Edit</button>
+				<button onClick={() => onEditSong({ artistName, songName, textChords })}>Edit</button>
 				<blockquote>
 					<div key={songName}>
 						<h2>{songName}</h2>
