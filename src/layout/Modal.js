@@ -9,24 +9,19 @@ class EditSongModal extends Component {
     textChords: '',
   };
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if(nextProps.currSong) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-
   componentWillReceiveProps(nextProps){
     if(nextProps.isEditSongMode) {
-      const { artistName, songName, textChords } = this.props.currSong;
+      const { artistName, songName, textChords, songKey } = this.props.currSong;
       this.setState({
-        artistName, songName, textChords
+        artistName, songName, textChords, songKey
+      });
+    } else {
+      this.setState({
+        songName: '',
+        artistName: '',
+        textChords: '',
       });
     }
-  }
-
-  componentDidUpdate(){
-    console.log(this.state)
   }
 
   onChangeSongName = ({ target }) => {
@@ -48,13 +43,13 @@ class EditSongModal extends Component {
       <Row>
         <Col span={12}>
           <Row style={{padding: '10px 0'}}>
-            <Input placeholder="Artist" value={artistName} onChange={this.onChangeArtistName} style={{ height: 20 }}/> 
+            <Input placeholder="Artist" value={artistName} onChange={this.onChangeArtistName} style={{ height: 20, width: '100%' }}/> 
           </Row>
           <Row style={{padding: '10px 0'}}>
-            <Input placeholder="Song name" value={songName} onChange={this.onChangeSongName} style={{ height: 20 }}/> 
+            <Input placeholder="Song name" value={songName} onChange={this.onChangeSongName} style={{ height: 20, width: '100%' }}/> 
           </Row>
           <Row style={{padding: '10px 0'}}>
-            <Input.TextArea placeholder="Text" value={textChords} onChange={this.onChangeTextChord} autosize/> 
+            <Input.TextArea placeholder="Text" value={textChords} onChange={this.onChangeTextChord} style={{ height: 500, width: '100%' }}/> 
           </Row>
         </Col>
       </Row>
@@ -62,13 +57,13 @@ class EditSongModal extends Component {
   }
 
   render() {
-    const { isModal, currUser, onAddSong, onModalCancel } = this.props;
+    const { isModal, currUser, updateSong, onModalCancel } = this.props;
     return (
       <Modal
         title={null}
         visible={isModal}
         closable={false}
-        onOk={() => onAddSong(this.state)}
+        onOk={() => updateSong(this.state)}
         onCancel={onModalCancel}
         okText="Обновить"
         className={styles.modal}

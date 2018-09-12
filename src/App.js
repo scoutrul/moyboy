@@ -20,7 +20,7 @@ class App extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state);
+    console.log('APP state', this.state);
   }
 
   getSongList = () => {
@@ -39,11 +39,15 @@ class App extends Component {
     auth.signOut().then(this.setState({ currUser: null}));
   }
 
-  onAddSong = (newSong) => {
-    const { artistName, songName, textChords } = newSong;
-
+  updateSong = ({ artistName, songName, textChords, songKey }) => {
     if (artistName && songName && textChords) {
-      database.ref(`catalog/${artistName}/${songName}/`).push({ artistName, songName, textChords });
+      if(this.state.isEditSongMode){
+        //update
+        database.ref(`catalog/${artistName}/${songName}/${songKey}`).update({ artistName, songName, textChords });
+      } else {
+        // new 
+        database.ref(`catalog/${artistName}/${songName}/`).push({ artistName, songName, textChords });
+      }
 
       this.setState({
         songName: '',
@@ -53,6 +57,8 @@ class App extends Component {
         isEditSongMode: false,
         editingSong: null,
       });
+    } else {
+      console.log('input error')
     }
   }
 
@@ -63,6 +69,11 @@ class App extends Component {
      })
   }
 
+  onDeleteSong = ({ songPath, songKey }) => {
+    database.ref(songPath).child(songKey).remove();
+    this.onShowAllSongs();
+  }
+
   onModalCancel = () => {
     this.setState({ 
       isModal: false,
@@ -71,19 +82,23 @@ class App extends Component {
   }
 
   onAddSongModal = () => {
-    this.setState({ isModal: true })
+    this.setState({ 
+      isModal: true,
+      isEditSongMode: false,
+     })
   }
 
   onShowSong = (artistName, songName, songKey) => {
+    let key = Object.keys(songKey)[0];
     // завести константы для сущностей
-    const textChords = this.state.data[artistName][songName][Object.keys(songKey)[0]].text || this.state.data[artistName][songName][Object.keys(songKey)[0]].textChords;
+    const textChords = this.state.data[artistName][songName][key].text || this.state.data[artistName][songName][key].textChords;
     this.setState({
       currSong: {
         artistName,
         textChords,
         songName,
-        songKey: Object.keys(songKey)[0],
-        path: `data.${artistName}.${songName}.${Object.keys(songKey)[0]}`
+        songKey: key,
+        songPath: `catalog/${artistName}/${songName}`
       }
     });
   }
@@ -109,15 +124,16 @@ class App extends Component {
           onSignOut={this.onSignOut}
           onAddSongModal={this.onAddSongModal}
           onEditSong={this.onEditSong}
+          onDeleteSong={this.onDeleteSong}
         >
           <EditSongModal 
-            isModal={isModal}
-            currUser={currUser}
-            renderAddForm={this.renderAddForm}
-            onAddSong={this.onAddSong}
-            onModalCancel={this.onModalCancel}
-            isEditSongMode={this.state.isEditSongMode}
             currSong={currSong}
+            currUser={currUser}
+            isModal={isModal}
+            isEditSongMode={this.state.isEditSongMode}
+            updateSong={this.updateSong}
+            onModalCancel={this.onModalCancel}
+            renderAddForm={this.renderAddForm}
           />
         </MainLayout>
       </div>

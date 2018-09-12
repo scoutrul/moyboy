@@ -16,6 +16,7 @@ class MainLayout extends Component {
 			onSignIn, 
 			onSignOut, 
 			onEditSong,
+			onDeleteSong
 		} = this.props;
 		const { Header, Content, Sider } = Layout;
 
@@ -37,7 +38,7 @@ class MainLayout extends Component {
 	
 		const renderSongList = () => map(data, (artists, artistName) => {
 			return (
-				<Menu theme="dark" mode="inline" key="songData">
+				<Menu theme="dark" mode="inline" key={artistName}>
 				{ 
 					map(artists, (songKey, songName) => (
 						<Menu.Item key={songName}>
@@ -49,10 +50,11 @@ class MainLayout extends Component {
 			)
 		});
 		
-		const renderCurrSong = ({ artistName, songName, textChords }) => (
+		const renderCurrSong = ({ artistName, songName, textChords, songPath, songKey }) => (
 			<div>
 				<h1>{ artistName }</h1>
 				<button onClick={() => onEditSong({ artistName, songName, textChords })}>Edit</button>
+				<button onClick={() => onDeleteSong({ songPath, songKey })}>Delete</button>
 				<blockquote>
 					<div key={songName}>
 						<h2>{songName}</h2>
@@ -64,7 +66,7 @@ class MainLayout extends Component {
 			</div>
 		);
 	
-		const signChange = () => {
+		const renderSignButton = () => {
 			if (currUser) {
 				return <button onClick={() => onSignOut()} disabled={!currUser}>Sing out</button>
 			}
@@ -96,7 +98,7 @@ class MainLayout extends Component {
 						className={styles.sider}
 					>
 						<Content className={styles.content}>
-							{ signChange() }	
+							{ renderSignButton() }	
 							{ renderSongList() }
 						</Content>
 					</Sider>
