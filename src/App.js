@@ -133,7 +133,6 @@ class App extends Component {
           isEditSongMode={this.state.isEditSongMode}
           updateSong={this.updateSong}
           onModalCancel={this.onModalCancel}
-          renderAddForm={this.renderAddForm}
         />
       </div>
     )
