@@ -1,5 +1,5 @@
-import MainLayout from './Layout';
-import EditSongModal from './Modal';
+import MainLayout from './Layout/MainLayout';
+import EditSongModal from './Modal/EditSongModal';
 
 export { 
     MainLayout, 
