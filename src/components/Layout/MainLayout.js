@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Layout } from 'antd';
 import styles from './styles.scss';
 
-import { AllSongs, SongList, CurrentSong } from './index';
+import { AllSongs, SongList, CurrentSong } from './';
+import { TodoList } from '../index'
 
 class MainLayout extends Component {
 
@@ -58,6 +59,9 @@ class MainLayout extends Component {
 							{ SongList(data, onShowSong) }
 							{ renderAddButton() }
 							{ currSong && <input type="submit" value="show all" onClick={() => onShowAllSongs()}/>}
+						</Content>
+						<Content className={styles.content}>
+							{ TodoList() }
 						</Content>
 					</Sider>
 				</Layout>
