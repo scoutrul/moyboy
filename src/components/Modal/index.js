@@ -57,11 +57,11 @@ class EditSongModal extends Component {
   }
 
   render() {
-    const { isModal, currUser, updateSong, onModalCancel } = this.props;
+    const { isAddSongModal, currUser, updateSong, onModalCancel } = this.props;
     return (
       <Modal
         title={null}
-        visible={isModal}
+        visible={isAddSongModal}
         closable={false}
         onOk={() => updateSong(this.state)}
         onCancel={onModalCancel}

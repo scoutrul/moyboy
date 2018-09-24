@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { auth, googleAuthProvider, database } from './firebase';
-import { MainLayout, EditSongModal } from './layout';
-import { get } from 'lodash';
+import { MainLayout, EditSongModal } from './components';
 import './styles.scss'
 
 class App extends Component {
   state = {
     currUser: null,
     data: null,
-    isModal: false,
+    isAddSongModal: false,
     currSong: null,
   };
 
@@ -17,10 +16,6 @@ class App extends Component {
       this.setState({ currUser});
     });
     this.getSongList();
-  }
-
-  componentDidUpdate() {
-    console.log('APP state', this.state);
   }
 
   getSongList = () => {
@@ -53,7 +48,7 @@ class App extends Component {
         songName: '',
         artistName: '',
         textChords: '',
-        isModal: false,
+        isAddSongModal: false,
         isEditSongMode: false,
         editingSong: null,
       });
@@ -64,7 +59,7 @@ class App extends Component {
 
   onEditSong = () => {
     this.setState({ 
-      isModal: true,
+      isAddSongModal: true,
       isEditSongMode: true,
      })
   }
@@ -76,14 +71,14 @@ class App extends Component {
 
   onModalCancel = () => {
     this.setState({ 
-      isModal: false,
+      isAddSongModal: false,
       isEditSongMode: false,
      })
   }
 
   onAddSongModal = () => {
     this.setState({ 
-      isModal: true,
+      isAddSongModal: true,
       isEditSongMode: false,
      })
   }
@@ -110,7 +105,7 @@ class App extends Component {
   }
 
   render() {
-    const { currUser, currSong, isModal, data } = this.state;
+    const { currUser, currSong, isAddSongModal, data } = this.state;
 
     return (
       <div>
@@ -129,7 +124,7 @@ class App extends Component {
         <EditSongModal 
           currSong={currSong}
           currUser={currUser}
-          isModal={isModal}
+          isModal={isAddSongModal}
           isEditSongMode={this.state.isEditSongMode}
           updateSong={this.updateSong}
           onModalCancel={this.onModalCancel}
