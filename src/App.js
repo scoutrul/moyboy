@@ -9,6 +9,7 @@ class App extends Component {
     data: null,
     isAddSongModal: false,
     currSong: null,
+    isEditSongMode: false,
   };
 
   componentDidMount() {
@@ -105,7 +106,7 @@ class App extends Component {
   }
 
   render() {
-    const { currUser, currSong, isAddSongModal, data } = this.state;
+    const { currUser, currSong, isAddSongModal, data, isEditSongMode } = this.state;
 
     return (
       <div>
@@ -124,8 +125,8 @@ class App extends Component {
         <EditSongModal 
           currSong={currSong}
           currUser={currUser}
-          isModal={isAddSongModal}
-          isEditSongMode={this.state.isEditSongMode}
+          isAddSongModal={isAddSongModal}
+          isEditSongMode={isEditSongMode}
           updateSong={this.updateSong}
           onModalCancel={this.onModalCancel}
         />
