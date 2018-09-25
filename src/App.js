@@ -87,7 +87,7 @@ class App extends Component {
   onShowSong = (artistName, songName, songKey) => {
     let key = Object.keys(songKey)[0];
     // завести константы для сущностей
-    const textChords = this.state.data[artistName][songName][key].text || this.state.data[artistName][songName][key].textChords;
+    const textChords = this.state.data[artistName][songName][key].textChords;
     this.setState({
       currSong: {
         artistName,

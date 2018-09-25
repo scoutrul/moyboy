@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Input, Icon } from 'antd';
+import { map } from 'lodash';
 import { database } from '../../firebase';
 
 const columns = [{
@@ -42,16 +43,36 @@ const data = [
 class TodoList extends Component{
 
     state = {
-        value: 'Новая задача',
+        addValue: 'Новая задача',
+        data: null,
+    }
+
+    componentDidMount() {
+        database.ref('task').on('value', (snapshot) => {
+            this.formatData(snapshot.val())
+        })
+    }
+
+    formatData = (snapshot) => {
+        const container = [];
+        map(snapshot, (val, key) => {
+            container.push({
+                key,
+                title: val.title,
+                done: val.done,
+            })
+        }); 
+
+        this.setState({ data: container })
     }
 
     addTask = () => {
-        database.ref(`task`).push({ title: this.state.value, done: false });
+        database.ref(`task`).push({ title: this.state.addValue, done: false });
     }
     
     valueChange = (value) => {
         this.setState({
-            value: value.currentTarget.value,
+            addValue: value.currentTarget.value,
         })
     }
 
@@ -59,7 +80,7 @@ class TodoList extends Component{
         return(
             <div>
                 <Input 
-                    value={this.state.value} 
+                    value={this.state.addValue} 
                     onChange={(val) => this.valueChange(val)} 
                     addonAfter={
                         <button onClick={() => this.addTask()}>
@@ -70,7 +91,7 @@ class TodoList extends Component{
                 />
                 <Table 
                     columns={columns} 
-                    dataSource={data} 
+                    dataSource={this.state.data} 
                     pagination={false} 
                 />
             </div>
