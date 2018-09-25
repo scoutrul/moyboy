@@ -23,10 +23,8 @@ class TodoList extends Component{
                     done: val.done,
                 })
             }); 
-
-            let reversedata = reverse(data);
     
-            this.setState({ data: reversedata })
+            this.setState({ data: reverse(data) })
         })
     }
 
@@ -50,7 +48,6 @@ class TodoList extends Component{
 
     checkThis = (item, bool) => {
         database.ref(`task/${item.key}`).update({ ...item, done: bool });
-        this.getData();
     }
 
     addTask = () => {
