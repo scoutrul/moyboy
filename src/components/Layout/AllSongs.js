@@ -9,7 +9,7 @@ const AllSongs = (data) => map(data, (artists, artistName) => (
             <div key={songName}>
                 <h2>{songName}</h2>
                 <blockquote>
-                <pre>{ map(songKey, (song) => song.textChords || song.text) }</pre>
+                <pre>{ map(songKey, (song) => song.textChords) }</pre>
                 </blockquote>
             </div>
             )) }

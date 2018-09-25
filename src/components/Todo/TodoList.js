@@ -1,48 +1,81 @@
-import React from 'react';
-import { Table } from 'antd';
+import React, { Component } from 'react';
+import { Table, Input, Icon } from 'antd';
+import { database } from '../../firebase';
 
 const columns = [{
   title: 'Задачи',
   dataIndex: 'title',
   key: 'title',
-  render: (text) => text,
+  render: (text, item) => {
+    const showText = item.done ? <strike>{text}</strike> : <span>{text}</span>;
+    const control = item.done ? <button><Icon type="check" /></button> : <button><Icon type="clock-circle" /></button>;
+
+    return (
+        <div> 
+            {showText} {control}
+        </div>);
+    },
 }];
 
 const data = [
     {
         key: '1',
         title: 'Добавить компонент в разметку',
+        done: true,
     }, {
         key: '2',
         title: 'Вывести таблицу',
+        done: true,
     }, {
         key: '3',
         title: 'Интегрироваться с firebase',
+        done: true,
     }, {
         key: '4',
         title: 'Изменение, удаление тасков',
+        done: false,
     }
 ];
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-      disabled: record.key === '1', // Column configuration not to be checked
-    }),
-    hideDefaultSelections: false,
-    type: 'checkbox',
-    selectedRowKeys: ['1','2']
-  };
 
-const TodoList = () => (
-    <Table 
-        rowSelection={rowSelection} 
-        columns={columns} 
-        dataSource={data} 
-        pagination={false} 
-        bordered
-    />
-);
+
+
+class TodoList extends Component{
+
+    state = {
+        value: 'Новая задача',
+    }
+
+    addTask = () => {
+        database.ref(`task`).push({ title: this.state.value, done: false });
+    }
+    
+    valueChange = (value) => {
+        this.setState({
+            value: value.currentTarget.value,
+        })
+    }
+
+    render(){
+        return(
+            <div>
+                <Input 
+                    value={this.state.value} 
+                    onChange={(val) => this.valueChange(val)} 
+                    addonAfter={
+                        <button onClick={() => this.addTask()}>
+                            <Icon type="plus" />
+                        </button>
+                    } 
+                    placeholder="Новая задача"
+                />
+                <Table 
+                    columns={columns} 
+                    dataSource={data} 
+                    pagination={false} 
+                />
+            </div>
+        )
+    }
+}
 
 export default TodoList;

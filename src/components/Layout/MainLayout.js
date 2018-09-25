@@ -61,7 +61,7 @@ class MainLayout extends Component {
 							{ currSong && <input type="submit" value="show all" onClick={() => onShowAllSongs()}/>}
 						</Content>
 						<Content className={styles.content}>
-							{ TodoList() }
+							<TodoList/>
 						</Content>
 					</Sider>
 				</Layout>

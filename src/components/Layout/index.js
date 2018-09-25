@@ -1,5 +1,5 @@
 import MainLayout from './MainLayout';
-import AllSongs from './Songs';
+import AllSongs from './AllSongs';
 import SongList from './SongList';
 import CurrentSong from './CurrentSong';
 
