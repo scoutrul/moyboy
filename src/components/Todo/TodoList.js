@@ -36,10 +36,11 @@ class TodoList extends Component{
             render: (text, item) => {
                 const showText = item.done ? <strike>{text}</strike> : <span>{text}</span>;
                 const control = item.done ? <button onClick={() => this.checkThis(item, false)}><Icon type="check" /></button> : <button onClick={() => this.checkThis(item, true)}><Icon type="clock-circle" /></button>;
+                const del = <button onClick={() => this.removeTask(item)}><Icon type="close" /></button>;
             
                 return (
                     <div> 
-                        {control} {showText}
+                        {control} {showText} {del}
                     </div>
                 );
             },
@@ -52,6 +53,10 @@ class TodoList extends Component{
 
     addTask = () => {
         database.ref(`task`).push({ title: this.state.addValue, done: false });
+    }
+
+    removeTask = (item) => {
+        database.ref(`task/${item.key}`).remove();
     }
     
     valueChange = (value) => {
