@@ -4,6 +4,7 @@ import styles from './styles.scss';
 
 import { AllSongs, SongList, CurrentSong } from './';
 import { TodoList } from '../index'
+import { Icon } from 'antd';
 
 class MainLayout extends Component {
 
@@ -28,9 +29,9 @@ class MainLayout extends Component {
 	
 		const renderSignButton = () => {
 			if (currUser) {
-				return <button onClick={() => onSignOut()} disabled={!currUser}>Sing out</button>
+				return <button onClick={() => onSignOut()} disabled={!currUser}><Icon type="lock" /></button>
 			}
-			return <button onClick={() => onSignIn()} disabled={currUser}>Sing in</button>
+			return <button onClick={() => onSignIn()} disabled={currUser}><Icon type="user" /></button>
 		}
 		
 		const showSongs = () => {
@@ -41,7 +42,7 @@ class MainLayout extends Component {
 		}
 	
 		const renderAddButton = () => {
-			return currUser && <input type="submit" value="add song" onClick={() => onAddSongModal()}/>
+			return currUser && <button onClick={() => onAddSongModal()}><Icon type="folder-add" /></button>
 		}
 		return (
 			<Layout>
